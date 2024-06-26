@@ -1,5 +1,4 @@
 import { ethers } from 'ethers';
-import GlobalFactory from 'global-factory';
 import PDTK from '../artifacts/contracts/PrivateDataToken.sol/PrivateDataToken.json';
 
 export async function deploySingleContract(
@@ -32,5 +31,7 @@ export async function deployContracts(deployer: ethers.Signer): Promise<any> {
 
     // Deploy the contract
     const pdtkContract = await deploySingleContract(abi, bytecode, deployer);
-    return pdtkContract;
+    return {
+        pdtkContract
+    };
 }
