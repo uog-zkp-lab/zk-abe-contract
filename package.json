@@ -2,7 +2,7 @@
   "name": "hardhat-project",
   "scripts": {
     "compile": "hardhat compile",
-    "deploy:local": "hardhat run --network hardhat scripts/deploy.ts",
+    "deploy:local": "hardhat run --network local scripts/deploy.ts",
     "deploy:arbsepolia": "hardhat run --network arbsepolia scripts/deploy.ts",
     "format": "prettier --write \"**/*.{ts,sol}\"",
     "node": "hardhat node",
