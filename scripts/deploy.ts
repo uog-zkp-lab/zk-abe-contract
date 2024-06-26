@@ -14,37 +14,40 @@ export async function main() {
         );
     }
     const [deployer] = await ethers.getSigners();
-    const contract = await deployContracts(deployer);
+    const contracts = await deployContracts(deployer);
+    const pdtkAddr = contracts.pdtkContract.target
+    if (network.name === 'arbsepolia') {
+        console.log("PDTK has been deployed on arbitrum sepolia");
+        console.log(`Please checkout https://sepolia.arbiscan.io/address/${pdtkAddr}.`);    
+    }
+    
 
-    const configPath = path.join(__dirname, '../.env');
+
+    const configPath = path.join(__dirname, '../.env.be');
     // if file not exists, create it
     if (!fs.existsSync(configPath)) {
         fs.writeFileSync(configPath, '');
-    }
+    }    
 
-    // fs.readFile(configPath, 'utf8', async (err, data) => {
-    //     if (err) {
-    //         console.error(err)
-    //         return
-    //     }
-    //     const config = envfile.parse(data)
+    // writing .env config file for backend
+    fs.readFile(configPath, 'utf8', async (err, data) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        const config = envfile.parse(data)
 
-    //     config.UNIREP_ADDRESS = unirep.address
-    //     config.APP_ADDRESS = app.address
-    //     config.ETH_PROVIDER_URL = hardhat.network.config.url ?? ''
-    //     config.PRIVATE_KEY = Array.isArray(hardhat.network.config.accounts)
-    //         ? `${hardhat.network.config.accounts[0]}`
-    //         : `/**
-    //           This contract was deployed using a mnemonic. The PRIVATE_KEY variable needs to be set manually
-    //           **/`
+        config.PDTK_ADDRESS = pdtkAddr;
+        config.ETH_PROVIDER_URL = (network.config as any).url ?? '';
+        config.PRIVATE_KEY = Array.isArray(network.config.accounts)
+            ? `${(network.config as any).accounts[0]}`
+            : `/**
+              This contract was deployed using a mnemonic. The PRIVATE_KEY variable needs to be set manually
+              **/`
+        await fs.promises.writeFile(configPath, envfile.stringify(config))
+    })
 
-    //     // get forked block number
-    //     const blockNum = await ethers.provider.getBlockNumber()
-    //     config.GENESIS_BLOCK = (blockNum - 999).toString()
-    //     await fs.promises.writeFile(configPath, envfile.stringify(config))
-    // })
-
-    // console.log(`Config written to ${configPath}`);
+    console.log(`Config written to ${configPath}`);
 }
 
 // main function
